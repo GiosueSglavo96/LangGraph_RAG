@@ -1,3 +1,3 @@
 # LangGraph_RAG
 
-Multi Agent RAG
+Multi_Agent_RAG
