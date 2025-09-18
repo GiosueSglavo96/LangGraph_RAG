@@ -1,7 +1,7 @@
 import os
 import streamlit as st
 
-UPLOADED_FILES_DIRECTORY = "uploaded_files"
+UPLOADED_FILES_DIRECTORY = "data/input_files"
 os.makedirs(UPLOADED_FILES_DIRECTORY, exist_ok=True)
 
 alpha = 0.75
@@ -161,5 +161,4 @@ with st.sidebar:
                     st.success(f"File {uploaded_file.name} saved successfully.")
 
                 
-
             st.success("RAG configuration submitted!")
