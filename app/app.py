@@ -1,5 +1,14 @@
+import sys
 import os
+
+project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+if project_root not in sys.path:
+    sys.path.insert(0, project_root)
+
+from time import time
 import streamlit as st
+
+from src.multi_agent_system.main import run_workflow
 
 UPLOADED_FILES_DIRECTORY = "data/input_files"
 os.makedirs(UPLOADED_FILES_DIRECTORY, exist_ok=True)
@@ -10,12 +19,22 @@ text_boost = 0.2
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+if "configured_rag" not in st.session_state:
+    st.session_state.configured_rag = True
+
+if "rag_config" not in st.session_state:
+    st.session_state.rag_config = {}
+
 st.title("RAG & LangGraph Application")
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
         st.markdown(message["content"])
-    
+
+def response_generator(response):
+    for word in response.split():
+        yield word + " "
+
 with st.sidebar:
     st.header("RAG Settings")
 
@@ -166,20 +185,37 @@ with st.sidebar:
                     with open(saving_file_path, "wb") as f:
                         f.write(uploaded_file.getbuffer())
                     st.success(f"File {uploaded_file.name} saved successfully.")
+                st.session_state.configured_rag = True
 
-                
-            st.success("RAG configuration submitted!")
+                rag_config = {
+                    "chunk_size": st.session_state.chunk_size,
+                    "chunk_overlap": st.session_state.chunk_overlap,
+                    "top_n_semantic": st.session_state.top_n_semantic,
+                    "top_n_text": st.session_state.top_n_text,
+                    "alpha": st.session_state.alpha,
+                    "text_boost": st.session_state.text_boost,
+                    "final_top_k": st.session_state.final_top_k,
+                    "mmr": mmr,
+                    "mmr_lambda": mmr_lambda,
+                }
+                st.session_state.rag_config = rag_config
 
-prompt = st.chat_input("Ask something...", disabled=True if not submitted else False)
+                st.success("RAG configuration submitted!")
+            else:
+                st.error("Please upload one or more files to proceed with RAG.")
+                #st.session_state.configured_rag = False
+
+print(st.session_state.configured_rag)
+prompt = st.chat_input("Ask something...", disabled=not st.session_state.configured_rag)
 if prompt:
     with st.chat_message("user", width="stretch", avatar="user"):
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.chat_message("assistant", width="stretch", avatar="assistant"):
-        response = st.write_stream("Esempio")
+        response = run_workflow(prompt, st.session_state.rag_config)
+        print("STREAMLIT RESPONSE:", response)
+        st.write(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-
-
-
+st.info("Please configure RAG settings in the sidebar to enable chat input.")

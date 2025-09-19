@@ -1,6 +1,7 @@
-from models.llm_model import get_llm
+from src.multi_agent_system.models.llm_model import get_llm
+from src.multi_agent_system.state.workflow_state import AppState, QueryEthics
+
 from langchain_core.prompts import ChatPromptTemplate
-from state.workflow_state import AppState, QueryEthics
 
 prompt_template = ChatPromptTemplate.from_messages(
     [
