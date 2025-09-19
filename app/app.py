@@ -7,8 +7,15 @@ os.makedirs(UPLOADED_FILES_DIRECTORY, exist_ok=True)
 alpha = 0.75
 text_boost = 0.2
 
+if "messages" not in st.session_state:
+    st.session_state.messages = []
+
 st.title("RAG & LangGraph Application")
 
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.markdown(message["content"])
+    
 with st.sidebar:
     st.header("RAG Settings")
 
@@ -162,3 +169,17 @@ with st.sidebar:
 
                 
             st.success("RAG configuration submitted!")
+
+prompt = st.chat_input("Ask something...", disabled=True if not submitted else False)
+if prompt:
+    with st.chat_message("user", width="stretch", avatar="user"):
+        st.markdown(prompt)
+    st.session_state.messages.append({"role": "user", "content": prompt})
+
+    with st.chat_message("assistant", width="stretch", avatar="assistant"):
+        response = st.write_stream("Esempio")
+    st.session_state.messages.append({"role": "assistant", "content": response})
+
+
+
+
