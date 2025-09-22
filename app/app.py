@@ -10,7 +10,7 @@ import streamlit as st
 
 from src.multi_agent_system.main import run_workflow
 
-UPLOADED_FILES_DIRECTORY = "data/input_files"
+UPLOADED_FILES_DIRECTORY = "../data/input_files"
 os.makedirs(UPLOADED_FILES_DIRECTORY, exist_ok=True)
 
 alpha = 0.75

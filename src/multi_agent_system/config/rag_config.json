@@ -1,0 +1,12 @@
+{
+    "qdrant_url": "http://localhost:6333",
+    "chunk_size": 700,
+    "chunk_overlap": 50,
+    "top_n_semantic": 30,
+    "top_n_text": 30,
+    "alpha": 0.75,
+    "text_boost": 0.2,
+    "final_top_k": 5,
+    "mmr": false,
+    "mmr_lambda": null
+}
