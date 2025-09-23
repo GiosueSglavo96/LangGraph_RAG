@@ -215,7 +215,8 @@ if prompt:
     with st.chat_message("assistant", width="stretch", avatar="assistant"):
         response = run_workflow(prompt, st.session_state.rag_config)
         print("STREAMLIT RESPONSE:", response)
-        st.write(response)
+        for res in response:
+            st.write(res)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
 st.info("Please configure RAG settings in the sidebar to enable chat input.")

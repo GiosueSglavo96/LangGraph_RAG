@@ -11,7 +11,8 @@ prompt_template = ChatPromptTemplate.from_messages(
         - If the context contains relevant information, set:
             - The 'found_info' variable to True.
             - The 'context' variable to the context passed in the prompt.
-            - The 'response' variable to a concise and accurate answer to the query based solely on the context. Always include in the response, the sources of the information exactly as they appear in the context, in the format: [source: <file_name>].
+            - The 'response' variable to a concise and accurate answer to the query based solely on the context. 
+            Always include in the response, the sources of the information as they appear in the context, in the format: [source: <file_name>] where <file_name> is the name of the file containing the information without the complete path.
         - If the context does NOT contain any relevant information, set:
             - The 'found_info' variable to False.
             - The 'context' to a empty string.
@@ -38,7 +39,7 @@ def medical_rag(state: AppState) -> AppState:
         rag_chain = prompt_template | structured_llm
         rag_response = rag_chain.invoke({"query": query, "context": context})
         state.rag = rag_response
-        state.response = state.rag.response
+        state.response.append(state.rag.response)
         return state
     except Exception as e:
         print(f"Error in RAG execution: {e}")
