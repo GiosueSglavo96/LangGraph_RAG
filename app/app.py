@@ -20,12 +20,19 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 if "configured_rag" not in st.session_state:
-    st.session_state.configured_rag = True
+    st.session_state.configured_rag = False
 
 if "rag_config" not in st.session_state:
     st.session_state.rag_config = {}
 
-st.title("RAG & LangGraph Application")
+
+st.markdown("### 🩺 Medine RAG App "
+"& " \
+"🌦️ Forecasts Assistant")
+
+st.markdown("""
+###### Upload your medical documents to perform **RAG (Retrieval-Augmented Generation)**. Ask me for **weather forecasts**, or anything else. I'll search the web for you! 🌐
+""")
 
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
@@ -203,7 +210,7 @@ with st.sidebar:
                 st.success("RAG configuration submitted!")
             else:
                 st.error("Please upload one or more files to proceed with RAG.")
-                #st.session_state.configured_rag = False
+                st.session_state.configured_rag = False
 
 print(st.session_state.configured_rag)
 prompt = st.chat_input("Ask something...", disabled=not st.session_state.configured_rag)
@@ -212,11 +219,13 @@ if prompt:
         st.markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    with st.chat_message("assistant", width="stretch", avatar="assistant"):
-        response = run_workflow(prompt, st.session_state.rag_config)
-        print("STREAMLIT RESPONSE:", response)
-        for res in response:
-            st.write(res)
+    with st.spinner("Agents at work..."):
+        with st.chat_message("assistant", width="stretch", avatar="assistant"):
+            response = run_workflow(prompt, st.session_state.rag_config)
+            print("STREAMLIT RESPONSE:", response)
+            for res in response:
+                st.write(res)
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-st.info("Please configure RAG settings in the sidebar to enable chat input.")
+if st.session_state.configured_rag == False:
+    st.info("Please configure RAG settings in the sidebar to enable chat input.")

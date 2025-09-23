@@ -16,7 +16,7 @@ prompt_template = ChatPromptTemplate.from_messages(
         - If the context does NOT contain any relevant information, set:
             - The 'found_info' variable to False.
             - The 'context' to a empty string.
-            - The 'response' variable to "I'm sorry, but I don't have the information you're looking for."""),
+            - The 'response' variable to "I'm sorry, but I don't have the information you're looking for in the loaded documents."""),
         ("human","""
          Query: \n{query}\n\n
          Context: \n{context}\n\n
